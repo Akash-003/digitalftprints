@@ -7,8 +7,8 @@ export const site = {
   name: 'Digital Footprints',
   domain: 'digitalftprints.com',
 
-  // TODO: replace with your real inbox — used by the contact form (mailto) + footer.
-  email: 'hello@digitalftprints.com',
+  // Used by the contact form (mailto) + footer.
+  email: 'contact@digitalftprints.com',
 
   tagline: 'We leave footprints that convert.',
   blurb:
