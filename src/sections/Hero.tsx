@@ -1,22 +1,44 @@
-import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from 'motion/react'
 import { Magnetic } from '../lib/anim'
-import { site } from '../data/site'
+import HeroEffects from './HeroEffects'
 
 const words = ['revenue.', 'rankings.', 'installs.', 'growth.']
 
-const headline: { text: string; gradient?: boolean }[] = [
+const headline: { text: string; accent?: boolean }[] = [
   { text: 'We' },
   { text: 'leave' },
-  { text: 'digital footprints', gradient: true },
+  { text: 'digital footprints', accent: true },
   { text: 'that' },
   { text: 'move' },
 ]
 
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null)
+  // content drifts up slower than the page and fades as you scroll away
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120])
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0])
+
   return (
-    <section className="relative flex min-h-[92vh] items-center px-5 pt-24">
-      <div className="mx-auto max-w-6xl">
+    <section
+      ref={ref}
+      className="relative flex min-h-[92vh] items-center px-5 pt-24"
+    >
+      <HeroEffects />
+      <motion.div
+        style={{ y, opacity }}
+        className="relative mx-auto w-full max-w-6xl"
+      >
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -32,7 +54,7 @@ export default function Hero() {
             <Word
               key={i}
               delay={0.1 + i * 0.08}
-              className={t.gradient ? 'text-gradient' : ''}
+              className={t.accent ? 'text-gradient' : ''}
             >
               {t.text}
             </Word>
@@ -48,8 +70,8 @@ export default function Hero() {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="mt-7 max-w-xl text-lg text-muted"
         >
-          {site.blurb} Performance marketing, web & app development, SEO, and
-          consultation — built to move revenue, not just impressions.
+          Performance marketing, web & app development, SEO, and growth
+          consultation for brands that want to move fast.
         </motion.p>
 
         <motion.div
@@ -71,7 +93,25 @@ export default function Hero() {
             Let's talk →
           </Magnetic>
         </motion.div>
-      </div>
+      </motion.div>
+
+      {/* scroll cue — fades once scrolling starts */}
+      <motion.div
+        style={{ opacity: cueOpacity }}
+        className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex"
+        aria-hidden
+      >
+        <span className="text-[10px] tracking-[0.25em] text-muted uppercase">
+          Scroll
+        </span>
+        <span className="relative h-10 w-px overflow-hidden bg-line">
+          <motion.span
+            className="absolute top-0 left-0 h-4 w-px bg-gradient-to-b from-fuchsia to-cyan"
+            animate={{ y: [-16, 40] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeIn' }}
+          />
+        </span>
+      </motion.div>
     </section>
   )
 }
@@ -88,8 +128,14 @@ function Word({
   return (
     <motion.span
       className={`mr-[0.25em] inline-block ${className}`}
-      initial={{ opacity: 0, y: 28, rotateX: -40 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      initial={{ opacity: 0, y: 28, rotateX: -40, filter: 'blur(8px)' }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        filter: 'blur(0px)',
+        transitionEnd: { filter: 'none' },
+      }}
       transition={{ delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -105,14 +151,16 @@ function CyclingWord() {
     return () => clearInterval(t)
   }, [])
   return (
-    <span className="text-gradient inline-block align-baseline">
+    <span className="inline-block align-baseline">
       <AnimatePresence mode="wait">
+        {/* accent class lives on the animating span: background-clip:text
+            breaks if a filtered child renders in its own layer */}
         <motion.span
           key={words[i]}
-          className="inline-block"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -14 }}
+          className="text-gradient inline-block"
+          initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -14, filter: 'blur(4px)' }}
           transition={{ duration: 0.35 }}
         >
           {words[i]}

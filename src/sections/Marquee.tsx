@@ -13,7 +13,7 @@ const items = [
 export default function Marquee() {
   return (
     <div className="relative overflow-hidden border-y border-line py-5">
-      <div className="animate-marquee flex w-max gap-8 whitespace-nowrap">
+      <div className="animate-marquee flex w-max gap-8 whitespace-nowrap hover:[animation-play-state:paused]">
         {[...items, ...items].map((item, i) => (
           <span key={i} className="flex items-center gap-8">
             <span className="font-display text-lg text-muted">{item}</span>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Reveal, Tilt } from '../lib/anim'
+import { Reveal, Tilt, WordReveal, DeckItem } from '../lib/anim'
 import { services } from '../data/site'
 
 export default function Services() {
@@ -10,14 +10,18 @@ export default function Services() {
           <p className="text-sm font-medium tracking-widest text-fuchsia uppercase">
             What we do
           </p>
-          <h2 className="font-display mt-3 max-w-2xl text-3xl font-bold tracking-tight text-fg sm:text-5xl">
-            Four levers. One outcome: growth.
-          </h2>
         </Reveal>
+        <WordReveal
+          segments={[
+            'Four levers. One outcome:',
+            { text: 'growth.', accent: true },
+          ]}
+          className="font-display mt-3 max-w-2xl text-3xl font-bold tracking-tight text-fg sm:text-5xl"
+        />
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2">
           {services.map((s, i) => (
-            <Reveal key={s.id} delay={i * 0.08}>
+            <DeckItem key={s.id} offset={i % 2 === 1}>
               <Tilt className="h-full">
                 {(glow) => (
                   <div className="group relative h-full overflow-hidden rounded-2xl border border-line bg-surface p-7 backdrop-blur">
@@ -47,7 +51,7 @@ export default function Services() {
                   </div>
                 )}
               </Tilt>
-            </Reveal>
+            </DeckItem>
           ))}
         </div>
       </div>

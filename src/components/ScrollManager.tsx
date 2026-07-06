@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { lenis } from './SmoothScroll'
 
 /** Scrolls to top on route change, or to the #hash target if present. */
 export default function ScrollManager() {
@@ -10,11 +11,15 @@ export default function ScrollManager() {
       // wait a frame so the target section is mounted
       const id = hash.slice(1)
       requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+        const el = document.getElementById(id)
+        if (!el) return
+        if (lenis) lenis.scrollTo(el, { offset: -64 })
+        else el.scrollIntoView({ behavior: 'smooth' })
       })
       return
     }
-    window.scrollTo({ top: 0 })
+    if (lenis) lenis.scrollTo(0, { immediate: true })
+    else window.scrollTo({ top: 0 })
   }, [pathname, hash])
 
   return null

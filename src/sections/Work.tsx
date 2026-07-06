@@ -1,5 +1,5 @@
 import { motion, type MotionValue } from 'motion/react'
-import { Reveal, Tilt } from '../lib/anim'
+import { Reveal, Tilt, WordReveal, DeckItem } from '../lib/anim'
 import { projects } from '../data/projects'
 
 export default function Work() {
@@ -10,10 +10,14 @@ export default function Work() {
           <p className="text-sm font-medium tracking-widest text-cyan uppercase">
             Selected work
           </p>
-          <h2 className="font-display mt-3 max-w-2xl text-3xl font-bold tracking-tight text-fg sm:text-5xl">
-            Footprints we've left behind.
-          </h2>
         </Reveal>
+        <WordReveal
+          segments={[
+            "Footprints we've",
+            { text: 'left behind.', accent: true },
+          ]}
+          className="font-display mt-3 max-w-2xl text-3xl font-bold tracking-tight text-fg sm:text-5xl"
+        />
 
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {projects.map((p, i) => {
@@ -60,7 +64,7 @@ export default function Work() {
             )
 
             return (
-              <Reveal key={p.id} delay={i * 0.08}>
+              <DeckItem key={p.id} offset={i % 2 === 1}>
                 <Tilt className="h-full">
                   {(glow) =>
                     p.link ? (
@@ -77,7 +81,7 @@ export default function Work() {
                     )
                   }
                 </Tilt>
-              </Reveal>
+              </DeckItem>
             )
           })}
         </div>

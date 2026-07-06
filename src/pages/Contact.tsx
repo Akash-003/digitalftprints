@@ -60,7 +60,8 @@ export default function Contact() {
                 Contact
               </p>
               <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-fg sm:text-6xl">
-                Let's build your next <span className="text-gradient">footprint.</span>
+                Let's build your next{' '}
+                <span className="text-gradient">footprint.</span>
               </h1>
               <p className="mt-6 max-w-md text-lg text-muted">
                 Tell us about your brand and where you want to grow. We usually

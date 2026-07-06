@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'motion/react'
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+  useSpring,
+} from 'motion/react'
 import Logo from './Logo'
 
 const links = [
@@ -11,26 +17,36 @@ const links = [
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  const { scrollY, scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 150, damping: 30 })
+
+  // hide when scrolling down past the hero's start, reveal on any scroll up
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    setScrolled(y > 16)
+    setHidden(y > 160 && y > (scrollY.getPrevious() ?? 0))
+  })
 
   useEffect(() => setOpen(false), [pathname])
 
   return (
-    <header
+    <motion.header
+      animate={{ y: hidden && !open ? '-100%' : 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         scrolled
           ? 'border-b border-line bg-ink/70 backdrop-blur-xl'
           : 'border-b border-transparent'
       }`}
     >
+      {/* reading-progress hairline */}
+      <motion.div
+        style={{ scaleX: progress }}
+        className="absolute inset-x-0 top-0 h-0.5 origin-left bg-gradient-to-r from-violet via-fuchsia to-cyan"
+      />
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Logo />
 
@@ -93,6 +109,6 @@ export default function Nav() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   )
 }

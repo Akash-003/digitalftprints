@@ -11,8 +11,9 @@ export const site = {
   email: 'contact@digitalftprints.com',
 
   tagline: 'We leave footprints that convert.',
+  // Short line under the logo in the footer.
   blurb:
-    'A young, dynamic growth studio building performance-driven marketing, websites, and apps for brands that want to move fast.',
+    'Performance marketing, web & app dev, SEO, and growth consultation.',
 
   // TODO: replace with your real profiles. Leave a value empty ('') to hide a link.
   socials: {
